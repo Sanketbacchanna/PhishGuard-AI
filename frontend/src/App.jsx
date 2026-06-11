@@ -5,7 +5,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 function App() {
   const [activeTab, setActiveTab] = useState('scanner');
-  
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-50 font-sans selection:bg-sky-500/30">
       <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl sticky top-0 z-50">
@@ -20,23 +20,21 @@ function App() {
               </span>
             </div>
             <div className="flex space-x-4">
-              <button 
+              <button
                 onClick={() => setActiveTab('scanner')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeTab === 'scanner' 
-                  ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm' 
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'scanner'
+                    ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
               >
                 URL Scanner
               </button>
-              <button 
+              <button
                 onClick={() => setActiveTab('dashboard')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeTab === 'dashboard' 
-                  ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm' 
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                }`}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'dashboard'
+                    ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
               >
                 Threat Dashboard
               </button>
@@ -61,10 +59,10 @@ function ScannerView() {
   const handleScan = async (e) => {
     e.preventDefault();
     if (!input) return;
-    
+
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/analyze', {
+      const response = await axios.post('https://phishguard-ai-xex8.onrender.com/api/analyze', {
         content: input,
         type: inputType,
         timestamp: new Date().toISOString()
@@ -92,30 +90,27 @@ function ScannerView() {
         <div className="absolute inset-0 bg-gradient-to-r from-sky-500/10 via-transparent to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
         <form onSubmit={handleScan} className="relative z-10 space-y-6">
           <div className="flex gap-4 p-1 bg-slate-900/50 rounded-lg w-fit">
-            <button 
+            <button
               type="button"
               onClick={() => setInputType('url')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                inputType === 'url' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25' : 'text-slate-400 hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${inputType === 'url' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25' : 'text-slate-400 hover:text-white'
+                }`}
             >
               <Search className="w-4 h-4" /> URL
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setInputType('email')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                inputType === 'email' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25' : 'text-slate-400 hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${inputType === 'email' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25' : 'text-slate-400 hover:text-white'
+                }`}
             >
               <Mail className="w-4 h-4" /> Email
             </button>
-            <button 
+            <button
               type="button"
               onClick={() => setInputType('sms')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                inputType === 'sms' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25' : 'text-slate-400 hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${inputType === 'sms' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/25' : 'text-slate-400 hover:text-white'
+                }`}
             >
               <MessageSquare className="w-4 h-4" /> SMS
             </button>
@@ -147,25 +142,22 @@ function ScannerView() {
       </div>
 
       {result && (
-        <div className={`glass-panel rounded-2xl p-8 animate-in fade-in zoom-in-95 duration-500 border-t-4 ${
-          result.status === 'Safe' ? 'border-t-emerald-500' : 
-          result.status === 'Suspicious' ? 'border-t-amber-500' : 'border-t-rose-500'
-        }`}>
+        <div className={`glass-panel rounded-2xl p-8 animate-in fade-in zoom-in-95 duration-500 border-t-4 ${result.status === 'Safe' ? 'border-t-emerald-500' :
+            result.status === 'Suspicious' ? 'border-t-amber-500' : 'border-t-rose-500'
+          }`}>
           <div className="flex items-start gap-6">
-            <div className={`flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center border-4 ${
-              result.status === 'Safe' ? 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10' : 
-              result.status === 'Suspicious' ? 'border-amber-500/30 text-amber-500 bg-amber-500/10' : 
-              'border-rose-500/30 text-rose-500 bg-rose-500/10'
-            }`}>
+            <div className={`flex-shrink-0 w-20 h-20 rounded-full flex items-center justify-center border-4 ${result.status === 'Safe' ? 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10' :
+                result.status === 'Suspicious' ? 'border-amber-500/30 text-amber-500 bg-amber-500/10' :
+                  'border-rose-500/30 text-rose-500 bg-rose-500/10'
+              }`}>
               <span className="text-2xl font-bold">{result.threat_score}%</span>
             </div>
-            
+
             <div className="flex-grow space-y-4">
               <div>
-                <h3 className={`text-2xl font-bold flex items-center gap-2 ${
-                  result.status === 'Safe' ? 'text-emerald-500' : 
-                  result.status === 'Suspicious' ? 'text-amber-500' : 'text-rose-500'
-                }`}>
+                <h3 className={`text-2xl font-bold flex items-center gap-2 ${result.status === 'Safe' ? 'text-emerald-500' :
+                    result.status === 'Suspicious' ? 'text-amber-500' : 'text-rose-500'
+                  }`}>
                   {result.status === 'Safe' && <CheckCircle className="w-6 h-6" />}
                   {result.status === 'Suspicious' && <AlertTriangle className="w-6 h-6" />}
                   {result.status === 'Phishing' && <Shield className="w-6 h-6" />}
@@ -214,7 +206,7 @@ function DashboardView() {
 
   useEffect(() => {
     // In a real app, fetch from backend
-    axios.get('http://localhost:5000/api/stats')
+    axios.get('https://phishguard-ai-xex8.onrender.com/api/stats')
       .then(res => setStats(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -256,14 +248,14 @@ function DashboardView() {
               <AreaChart data={mockChartData}>
                 <defs>
                   <linearGradient id="colorThreats" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                <XAxis dataKey="name" stroke="#94a3b8" tick={{fill: '#94a3b8'}} axisLine={false} />
-                <YAxis stroke="#94a3b8" tick={{fill: '#94a3b8'}} axisLine={false} tickLine={false} />
-                <Tooltip 
+                <XAxis dataKey="name" stroke="#94a3b8" tick={{ fill: '#94a3b8' }} axisLine={false} />
+                <YAxis stroke="#94a3b8" tick={{ fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                <Tooltip
                   contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', borderRadius: '8px' }}
                   itemStyle={{ color: '#e2e8f0' }}
                 />
@@ -292,7 +284,7 @@ function DashboardView() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', borderRadius: '8px' }}
                   itemStyle={{ color: '#e2e8f0' }}
                 />
@@ -325,16 +317,14 @@ function DashboardView() {
                 <tr key={idx} className="group hover:bg-slate-800/20 transition-colors">
                   <td className="py-4 text-slate-300 pr-4 max-w-md truncate">{item.url}</td>
                   <td className="py-4">
-                    <span className={`font-mono font-medium ${
-                      item.score > 70 ? 'text-rose-400' : item.score > 40 ? 'text-amber-400' : 'text-emerald-400'
-                    }`}>{item.score}%</span>
+                    <span className={`font-mono font-medium ${item.score > 70 ? 'text-rose-400' : item.score > 40 ? 'text-amber-400' : 'text-emerald-400'
+                      }`}>{item.score}%</span>
                   </td>
                   <td className="py-4">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${
-                      item.status === 'Safe' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-                      item.status === 'Suspicious' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 
-                      'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                    }`}>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${item.status === 'Safe' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                        item.status === 'Suspicious' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                          'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                      }`}>
                       {item.status}
                     </span>
                   </td>

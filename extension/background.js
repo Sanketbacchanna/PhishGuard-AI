@@ -5,7 +5,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             return;
         }
 
-        fetch('http://localhost:5000/api/analyze', {
+        fetch('https://phishguard-ai-xex8.onrender.com/api/analyze', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -16,20 +16,20 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 timestamp: new Date().toISOString()
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'Phishing' || data.status === 'Suspicious') {
-                chrome.action.setBadgeText({text: '!', tabId: tabId});
-                chrome.action.setBadgeBackgroundColor({color: '#FF0000', tabId: tabId});
-                
-                // Save the result for the popup
-                chrome.storage.local.set({ [tab.url]: data });
-            } else {
-                chrome.action.setBadgeText({text: '✓', tabId: tabId});
-                chrome.action.setBadgeBackgroundColor({color: '#00FF00', tabId: tabId});
-                chrome.storage.local.set({ [tab.url]: data });
-            }
-        })
-        .catch(error => console.error('Error analyzing URL:', error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Phishing' || data.status === 'Suspicious') {
+                    chrome.action.setBadgeText({ text: '!', tabId: tabId });
+                    chrome.action.setBadgeBackgroundColor({ color: '#FF0000', tabId: tabId });
+
+                    // Save the result for the popup
+                    chrome.storage.local.set({ [tab.url]: data });
+                } else {
+                    chrome.action.setBadgeText({ text: '✓', tabId: tabId });
+                    chrome.action.setBadgeBackgroundColor({ color: '#00FF00', tabId: tabId });
+                    chrome.storage.local.set({ [tab.url]: data });
+                }
+            })
+            .catch(error => console.error('Error analyzing URL:', error));
     }
 });
