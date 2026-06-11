@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "PhishGuard AI",
+  "version": "1.0",
+  "description": "Real-time protection against phishing attacks using AI.",
+  "permissions": ["activeTab", "tabs", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
