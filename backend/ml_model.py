@@ -22,7 +22,7 @@ def extract_features(content, content_type):
             features['has_https'] = 1
             
         # Suspicious keywords
-        suspicious_words = ['login', 'verify', 'update', 'secure', 'bank', 'account']
+        suspicious_words = ['login', 'verify', 'update', 'secure', 'bank', 'account', 'suspicious', 'suspisious', 'free', 'prize']
         found_words = [word for word in suspicious_words if word in content.lower()]
         if found_words:
             reasons.append(f"Contains suspicious keywords: {', '.join(found_words)}")
@@ -67,7 +67,7 @@ def predict_phishing(content, content_type):
         if features.get('length', 0) > 75: base_score += 15
         if features.get('has_ip', False): base_score += 40
         if features.get('has_at', False): base_score += 40
-        base_score += features.get('suspicious_keywords', 0) * 15
+        base_score += features.get('suspicious_keywords', 0) * 25
     else:
         base_score += len(reasons) * 25
         

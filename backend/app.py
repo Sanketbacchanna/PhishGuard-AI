@@ -4,6 +4,7 @@ import re
 import random
 from ml_model import predict_phishing
 import os
+import hashlib
 
 app = Flask(__name__)
 CORS(app)
@@ -64,10 +65,25 @@ def analyze():
     
 def check_security_apis(content):
     # Mock function to simulate API calls to VirusTotal & Google Safe Browsing
-    score = random.randint(0, 100) if "http" in content else random.randint(0, 30)
+    # Using hash to make the mock deterministic so the same URL always gives the same result
+    hash_val = int(hashlib.md5(content.encode('utf-8')).hexdigest(), 16)
+    content_lower = content.lower()
+    
+    suspicious_indicators = ['login', 'verify', 'update', 'secure', 'bank', 'account', 'suspicious', 'suspisious', 'free', 'prize']
+    
+    if any(word in content_lower for word in suspicious_indicators):
+        score = 80 + (hash_val % 21) # 80-100
+    elif "http://" in content_lower:
+        score = 40 + (hash_val % 31) # 40-70
+    elif re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', content):
+        score = 85 + (hash_val % 16) # 85-100
+    else:
+        score = hash_val % 30 # 0-29
+        
     reasons = []
     if score > 50:
         reasons.append("Flagged by security vendor APIs")
+        
     return {'score': score, 'reasons': reasons}
 
 @app.route('/api/stats', methods=['GET'])
