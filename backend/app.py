@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import re
-import random
 from ml_model import predict_phishing
 import os
 import hashlib

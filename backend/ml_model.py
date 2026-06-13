@@ -1,5 +1,4 @@
 import re
-import random
 
 # In a real application, you would load a trained Scikit-learn Random Forest model here.
 # e.g., model = joblib.load('random_forest_model.pkl')
