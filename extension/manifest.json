@@ -6,13 +6,13 @@
   "permissions": ["activeTab", "tabs", "storage"],
   "host_permissions": ["<all_urls>"],
   "icons": {
-    "128": "icon.jpeg"
+    "128": "icon.png"
   },
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "icon.jpeg"
+    "default_icon": "icon.png"
   }
 }
