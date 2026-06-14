@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         let currentTab = tabs[0];
-        let url = currentTab.url;
+        let url = currentTab?.url;
 
-        if (url.startsWith('chrome://') || url.startsWith('edge://')) {
+        if (!url || url.startsWith('chrome://') || url.startsWith('edge://')) {
             showResult({
                 status: 'Safe',
                 threat_score: 0,
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         // Update badge
                         let color = data.status === 'Safe' ? '#00FF00' : '#FF0000';
-                        let text = data.status === 'Safe' ? '✓' : '!';
+                        let text = data.status === 'Safe' ? '\u2713' : '!';
                         chrome.action.setBadgeText({ text: text, tabId: currentTab.id });
                         chrome.action.setBadgeBackgroundColor({ color: color, tabId: currentTab.id });
                     })

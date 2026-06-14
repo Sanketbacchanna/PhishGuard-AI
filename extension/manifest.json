@@ -4,10 +4,15 @@
   "version": "1.0",
   "description": "Real-time protection against phishing attacks using AI.",
   "permissions": ["activeTab", "tabs", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "icons": {
+    "128": "icon.jpeg"
+  },
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "icon.jpeg"
   }
 }

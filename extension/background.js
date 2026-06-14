@@ -25,7 +25,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     // Save the result for the popup
                     chrome.storage.local.set({ [tab.url]: data });
                 } else {
-                    chrome.action.setBadgeText({ text: '✓', tabId: tabId });
+                    chrome.action.setBadgeText({ text: '\u2713', tabId: tabId });
                     chrome.action.setBadgeBackgroundColor({ color: '#00FF00', tabId: tabId });
                     chrome.storage.local.set({ [tab.url]: data });
                 }
