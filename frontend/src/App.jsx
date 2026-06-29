@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Search, AlertTriangle, CheckCircle, BarChart3, Activity, Clock, Server, Mail, MessageSquare } from 'lucide-react';
+import { Shield, Search, AlertTriangle, CheckCircle, BarChart3, Activity, Clock, Server, Mail, MessageSquare, History, Trash2, BookOpen, ThumbsDown } from 'lucide-react';
 import axios from 'axios';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -38,13 +38,34 @@ function App() {
               >
                 Threat Dashboard
               </button>
+              <button
+                onClick={() => setActiveTab('history')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'history'
+                    ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                <History className="w-4 h-4" /> History
+              </button>
+              <button
+                onClick={() => setActiveTab('resources')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'resources'
+                    ? 'bg-slate-800 text-sky-400 border border-slate-700 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  }`}
+              >
+                <BookOpen className="w-4 h-4" /> Tips
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === 'scanner' ? <ScannerView /> : <DashboardView />}
+        {activeTab === 'scanner' && <ScannerView />}
+        {activeTab === 'dashboard' && <DashboardView />}
+        {activeTab === 'history' && <HistoryView />}
+        {activeTab === 'resources' && <ResourcesView />}
       </main>
     </div>
   );
@@ -55,6 +76,7 @@ function ScannerView() {
   const [inputType, setInputType] = useState('url');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [reported, setReported] = useState(false);
 
   const handleScan = async (e) => {
     e.preventDefault();
@@ -68,6 +90,20 @@ function ScannerView() {
         timestamp: new Date().toISOString()
       });
       setResult(response.data);
+      setReported(false);
+      
+      try {
+        const historyItem = {
+          input,
+          type: inputType,
+          timestamp: new Date().toISOString(),
+          result: response.data
+        };
+        const existingHistory = JSON.parse(localStorage.getItem('scanHistory') || '[]');
+        localStorage.setItem('scanHistory', JSON.stringify([historyItem, ...existingHistory].slice(0, 50)));
+      } catch (err) {
+        console.error('Failed to save history', err);
+      }
     } catch (error) {
       console.error('Error scanning:', error);
       alert('Error connecting to the backend. Is it running?');
@@ -181,6 +217,19 @@ function ScannerView() {
                   )}
                 </ul>
               </div>
+
+              {!reported ? (
+                <button 
+                  onClick={() => setReported(true)}
+                  className="mt-4 flex items-center gap-2 text-sm text-slate-400 hover:text-sky-400 transition-colors"
+                >
+                  <ThumbsDown className="w-4 h-4" /> Report incorrect analysis
+                </button>
+              ) : (
+                <p className="mt-4 text-sm text-sky-400 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" /> Thank you for your feedback!
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -354,6 +403,123 @@ function StatCard({ title, value, icon, color }) {
       <div>
         <div className="text-slate-400 text-sm font-medium">{title}</div>
         <div className="text-2xl font-bold text-white mt-1 group-hover:scale-105 transition-transform origin-left">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function HistoryView() {
+  const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    try {
+      setHistory(JSON.parse(localStorage.getItem('scanHistory') || '[]'));
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  const clearHistory = () => {
+    localStorage.removeItem('scanHistory');
+    setHistory([]);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-white">Scan History</h2>
+          <p className="text-slate-400">Your recent threat analyses (stored locally).</p>
+        </div>
+        {history.length > 0 && (
+          <button 
+            onClick={clearHistory}
+            className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-400 rounded-lg hover:bg-rose-500/20 transition-colors text-sm font-medium border border-rose-500/20"
+          >
+            <Trash2 className="w-4 h-4" /> Clear History
+          </button>
+        )}
+      </div>
+
+      {history.length === 0 ? (
+        <div className="glass-panel p-12 rounded-2xl text-center border-dashed">
+          <History className="w-12 h-12 text-slate-500 mx-auto mb-4 opacity-50" />
+          <h3 className="text-lg font-medium text-slate-300">No history yet</h3>
+          <p className="text-slate-500 mt-2">Scans you perform will appear here.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {history.map((item, idx) => (
+            <div key={idx} className="glass-panel p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center border-2 ${
+                  item.result.status === 'Safe' ? 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10' :
+                  item.result.status === 'Suspicious' ? 'border-amber-500/30 text-amber-500 bg-amber-500/10' :
+                  'border-rose-500/30 text-rose-500 bg-rose-500/10'
+                }`}>
+                <span className="font-bold text-sm">{item.result.threat_score}</span>
+              </div>
+              <div className="flex-grow min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={`text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    item.type === 'url' ? 'bg-blue-500/20 text-blue-400' :
+                    item.type === 'email' ? 'bg-purple-500/20 text-purple-400' :
+                    'bg-pink-500/20 text-pink-400'
+                  }`}>{item.type}</span>
+                  <span className="text-xs text-slate-500">{new Date(item.timestamp).toLocaleString()}</span>
+                </div>
+                <p className="text-slate-300 text-sm truncate" title={item.input}>{item.input}</p>
+              </div>
+              <div className="flex-shrink-0 text-right">
+                 <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${
+                    item.result.status === 'Safe' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                    item.result.status === 'Suspicious' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                    'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                  }`}>
+                  {item.result.status}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ResourcesView() {
+  const tips = [
+    { title: "Check the Sender", desc: "Always verify the sender's email address, not just their display name. Attackers often use look-alike domains (e.g., support@paypa1.com).", icon: <Mail className="w-5 h-5 text-sky-400" /> },
+    { title: "Inspect URLs", desc: "Hover over links before clicking. Ensure they lead to the official website. Beware of subtle misspellings or unusual subdomains.", icon: <Search className="w-5 h-5 text-sky-400" /> },
+    { title: "Urgency is a Red Flag", desc: "Phishing attempts often create a false sense of urgency (e.g., 'Your account will be suspended in 24 hours'). Stay calm and verify independently.", icon: <AlertTriangle className="w-5 h-5 text-amber-400" /> },
+    { title: "Enable 2FA", desc: "Two-Factor Authentication adds a critical layer of security. Even if attackers get your password, they can't log in without the second factor.", icon: <Shield className="w-5 h-5 text-emerald-400" /> }
+  ];
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
+      <div className="text-center space-y-4 mb-12">
+        <h2 className="text-3xl font-bold text-white">Educational Resources</h2>
+        <p className="text-slate-400 text-lg">Learn how to spot and avoid modern phishing attacks.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {tips.map((tip, idx) => (
+          <div key={idx} className="glass-panel p-6 rounded-2xl hover:bg-slate-800/80 transition-colors">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-slate-900 border border-slate-700">
+                {tip.icon}
+              </div>
+              <h3 className="text-lg font-semibold text-white">{tip.title}</h3>
+            </div>
+            <p className="text-slate-400 text-sm leading-relaxed">{tip.desc}</p>
+          </div>
+        ))}
+      </div>
+      
+      <div className="glass-panel p-8 rounded-2xl border-l-4 border-l-sky-500 mt-8">
+        <h3 className="text-xl font-bold text-white mb-2">What is PhishGuard AI?</h3>
+        <p className="text-slate-400">
+          PhishGuard AI uses advanced heuristic analysis and machine learning to evaluate the structure, origin, and intent of URLs, emails, and SMS messages. By examining hundreds of indicators (like domain age, SSL presence, keyword density, and structural anomalies), it provides a real-time risk assessment to keep you safe.
+        </p>
       </div>
     </div>
   );
