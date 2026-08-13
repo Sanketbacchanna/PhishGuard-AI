@@ -8,5 +8,61 @@
 
 /* Glassmorphism utilities */
 .glass-panel {
-  @apply bg-slate-800/60 backdrop-blur-md border border-slate-700/50 shadow-xl;
+  @apply bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 shadow-2xl shadow-slate-950/50;
 }
+
+/* Animations and Glows */
+@keyframes float-slow {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(20px, -20px) scale(1.05); }
+}
+
+@keyframes float-reverse {
+  0%, 100% { transform: translate(0px, 0px) scale(1.05); }
+  50% { transform: translate(-30px, 20px) scale(0.95); }
+}
+
+.cyber-glow-1 {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.25) 0%, rgba(14, 165, 233, 0) 70%);
+  animation: float-slow 15s ease-in-out infinite;
+}
+
+.cyber-glow-2 {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, rgba(168, 85, 247, 0) 70%);
+  animation: float-reverse 20s ease-in-out infinite;
+}
+
+.cyber-grid {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(51, 65, 85, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(51, 65, 85, 0.15) 1px, transparent 1px);
+}
+
+.glow-text-sky {
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.glow-text-emerald {
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+}
+
+.glow-text-rose {
+  text-shadow: 0 0 10px rgba(251, 113, 133, 0.5);
+}
+
+.terminal-scroll::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.terminal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.terminal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.15);
+  border-radius: 9999px;
+}
+.terminal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.3);
+}
+
