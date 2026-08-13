@@ -12,8 +12,8 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="bg-sky-500/10 p-2 rounded-lg border border-sky-500/20">
-                <Shield className="w-6 h-6 text-sky-400" />
+              <div className="bg-sky-500/10 p-1.5 rounded-lg border border-sky-500/20 flex items-center justify-center">
+                <img src="/favicon.svg" alt="PhishGuard AI Logo" className="w-7 h-7" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
                 PhishGuard AI
